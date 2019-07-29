@@ -1,0 +1,203 @@
+
+-- Sync Folders(helper.scpt) 
+
+on run
+	try
+		tell application "Finder"
+			set {button returned:SyncFolders} to ¬
+				display dialog {" 
+請鰛鰇鱮美鱺沝療癒鯀女鰰選擇欲鮦步之模式唷💋"} buttons ¬
+					{"雙向A<+>B鮦步", "鱓向A+>B鮦步", "鱓向A->B鮦步"} with title ¬
+					{"實鰣鮦步"}
+			set sourcePath to (choose folder with prompt "請沝療癒鯀女鰰選擇 A:來源資料夾 唷💋" default location (path to (users folder)))
+			set destinationPath to (choose folder with prompt "請沝療癒鯀女鰰選擇 B:目標資料夾 唷💋" default location (path to (startup disk)))
+			
+			if SyncFolders is "雙向A<+>B鮦步" then my BidirectionalSyncAdditionsItem(sourcePath, destinationPath)
+			if SyncFolders is "鱓向A+>B鮦步" then my SyncAdditionsItem(sourcePath, destinationPath)
+			if SyncFolders is "鱓向A->B鮦步" then my SyncTrackingDeletionsItem(sourcePath, destinationPath)
+		end tell
+	on error the error_message number the error_number
+		if error_number = -128 then continue quit
+		continue quit
+	end try
+end run
+
+on addLoginItem(appName, pathOfApp)
+	try
+		tell application "System Events" to set allLoginItems to name of every login item as string
+		if appName is in allLoginItems then
+		else
+			set appPath to POSIX path of pathOfApp
+			tell application "System Events"
+				make login item at end with properties {path:appPath, hidden:false}
+			end tell
+		end if
+	on error the error_message number the error_number
+		if error_number = -128 then continue quit
+		continue quit
+	end try
+end addLoginItem
+
+on removeLoginItem(appName, pathOfApp)
+	try
+		tell application "System Events"
+			if login item appName exists then delete login item appName
+		end tell
+	on error the error_message number the error_number
+		if error_number = -128 then continue quit
+		continue quit
+	end try
+end removeLoginItem
+
+on BidirectionalSyncAdditionsItem(sourcePath, destinationPath)
+	try
+		set APPitemPath to POSIX path of (path to me as text) ¬
+			& {"Contents/MacOS/rsync"}
+		set APPitemPath to quoted form of APPitemPath
+		do shell script ("if " & APPitemPath & " -aE --stats --exclude={.*,} " & quoted form of POSIX path of sourcePath & " " & quoted form of POSIX path of destinationPath & " " & quoted form of POSIX path of destinationPath & " " & quoted form of POSIX path of sourcePath & "; then echo 0; fi;")
+		delay 1
+		set isDone to false
+		set itemPath to ("rsync ")
+		set itemProgress to "ps ax | grep -v grep | grep " & itemPath
+		repeat while isDone is false
+			try
+				do shell script itemProgress
+				if the result contains itemPath then
+					delay 1
+				else
+					set isDone to true
+				end if
+			on error
+				set isDone to true
+			end try
+		end repeat
+		if isDone is true then
+			display notification (" 
+嚫鱫的鰛鰇鱮美鱺沝療癒鯀女鰰~ 
+鮦步鯇成鰳唷💋") with title {"實鰣鮦步"}
+			do shell script ("open " & quoted form of POSIX path of destinationPath)
+			continue quit
+		end if
+	on error the error_message number the error_number
+		if error_number = -128 then continue quit
+		continue quit
+	end try
+end BidirectionalSyncAdditionsItem
+
+on SyncAdditionsItem(sourcePath, destinationPath)
+	try
+		set APPitemPath to POSIX path of (path to me as text) ¬
+			& {"Contents/MacOS/rsync"}
+		set APPitemPath to quoted form of APPitemPath
+		do shell script ("if " & APPitemPath & " -aE --stats --exclude={.*,} " & quoted form of POSIX path of sourcePath & " " & quoted form of POSIX path of destinationPath & "; then echo 0; fi;")
+		delay 1
+		set isDone to false
+		set itemPath to ("rsync ")
+		set itemProgress to "ps ax | grep -v grep | grep " & itemPath
+		repeat while isDone is false
+			try
+				do shell script itemProgress
+				if the result contains itemPath then
+					delay 1
+				else
+					set isDone to true
+				end if
+			on error
+				set isDone to true
+			end try
+		end repeat
+		if isDone is true then
+			display notification (" 
+嚫鱫的鰛鰇鱮美鱺沝療癒鯀女鰰~ 
+鮦步鯇成鰳唷💋") with title {"實鰣鮦步"}
+			do shell script ("open " & quoted form of POSIX path of destinationPath)
+			continue quit
+		end if
+	on error the error_message number the error_number
+		if error_number = -128 then continue quit
+		continue quit
+	end try
+end SyncAdditionsItem
+
+on SyncTrackingDeletionsItem(sourcePath, destinationPath)
+	try
+		set APPitemPath to POSIX path of (path to me as text) ¬
+			& {"Contents/MacOS/rsync"}
+		set APPitemPath to quoted form of APPitemPath
+		do shell script ("if " & APPitemPath & " -aE --delete --stats --exclude={.*,} " & quoted form of POSIX path of sourcePath & " " & quoted form of POSIX path of destinationPath & "; then echo 0; fi;")
+		delay 1
+		set isDone to false
+		set itemPath to ("rsync ")
+		set itemProgress to "ps ax | grep -v grep | grep " & itemPath
+		repeat while isDone is false
+			try
+				do shell script itemProgress
+				if the result contains itemPath then
+					delay 1
+				else
+					set isDone to true
+				end if
+			on error
+				set isDone to true
+			end try
+		end repeat
+		if isDone is true then
+			display notification (" 
+嚫鱫的鰛鰇鱮美鱺沝療癒鯀女鰰~ 
+鮦步鯇成鰳唷💋") with title {"實鰣鮦步"}
+			do shell script ("open " & quoted form of POSIX path of destinationPath)
+			continue quit
+		end if
+	on error the error_message number the error_number
+		if error_number = -128 then continue quit
+		continue quit
+	end try
+end SyncTrackingDeletionsItem
+
+on copyItem(sourcePath, destinationPath, userName, userPass)
+	try
+		do shell script "if cp -Rp " & quoted form of sourcePath & " " & quoted form of destinationPath & "; then echo 0; fi;" user name userName password userPass with administrator privileges
+	on error the error_message number the error_number
+		if error_number = -128 then continue quit
+		continue quit
+	end try
+end copyItem
+
+on moveItem(sourcePath, destinationPath, userName, userPass)
+	try
+		do shell script "if mv -f " & quoted form of sourcePath & " " & quoted form of destinationPath & "; then echo 0; fi;" user name userName password userPass with administrator privileges
+	on error the error_message number the error_number
+		if error_number = -128 then continue quit
+		continue quit
+	end try
+end moveItem
+
+on removeItem(sourcePath, userName, userPass)
+	try
+		do shell script "if rm -rf " & quoted form of sourcePath & "; then echo 0; fi;" user name userName password userPass with administrator privileges
+	on error the error_message number the error_number
+		if error_number = -128 then continue quit
+		continue quit
+	end try
+end removeItem
+
+on createDirectory(sourcePath, userName, userPass)
+	try
+		do shell script "if mkdir -p " & quoted form of sourcePath & "; then echo 0; fi;" user name userName password userPass with administrator privileges
+	on error the error_message number the error_number
+		if error_number = -128 then continue quit
+		continue quit
+	end try
+end createDirectory
+
+on checkPass(userName, userPass)
+	try
+		do shell script "echo 0" user name userName password userPass with administrator privileges
+	on error the error_message number the error_number
+		if error_number = -128 then continue quit
+		continue quit
+	end try
+end checkPass
+
+
+-- 
