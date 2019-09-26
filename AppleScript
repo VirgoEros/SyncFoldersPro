@@ -1,6 +1,7 @@
 
--- Sync Folders(helper.scpt) 
+-- bit.ly/下載_SyncFoldersPro_plus 
 
+----------------------------∞ Sync Folders(helper.scpt) ∞---------------------------------ON. 
 on run
 	try
 		tell application "Finder"
@@ -11,7 +12,6 @@ on run
 					{"實鰣鮦步"}
 			set sourcePath to (choose folder with prompt "請沝療癒鯀女鰰選擇 A:來源資料夾 唷💋" default location (path to (users folder)))
 			set destinationPath to (choose folder with prompt "請沝療癒鯀女鰰選擇 B:目標資料夾 唷💋" default location (path to (startup disk)))
-			
 			if SyncFolders is "雙向A<+>B鮦步" then my BidirectionalSyncAdditionsItem(sourcePath, destinationPath)
 			if SyncFolders is "鱓向A+>B鮦步" then my SyncAdditionsItem(sourcePath, destinationPath)
 			if SyncFolders is "鱓向A->B鮦步" then my SyncTrackingDeletionsItem(sourcePath, destinationPath)
@@ -198,6 +198,8 @@ on checkPass(userName, userPass)
 		continue quit
 	end try
 end checkPass
+----------------------------∞ Sync Folders(helper.scpt) ∞-------------------------------END. 
 
 
 -- 
+ 
